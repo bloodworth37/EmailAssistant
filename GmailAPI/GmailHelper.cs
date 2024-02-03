@@ -100,4 +100,72 @@ public static class GmailMethods {
         return Convert.FromBase64String(base64);
     }
 
+    public static List<Gmail> CreateGmailList(List<Message> sortedEmails) {
+        List<Gmail> gmails = new List<Gmail>();
+        for (int i = 0; i < sortedEmails.Count; i++) {
+            try {
+                /*
+                Console.WriteLine($"Email No. {i}");
+                Console.WriteLine(RetrieveHeader(sortedEmails[i].Payload, "From"));
+                string body = "";
+                RetrieveBodyWrapper(sortedEmails[i].Payload, "text/plain", ref body);
+                Console.WriteLine($"Id: {RetrieveID(sortedEmails[i])}");
+                Console.WriteLine($"Internal Date: {RetrieveInternalDate(sortedEmails[i])}");
+                DateTime date = UnixTimeStampToDateTime(sortedEmails[i].InternalDate);
+                Console.WriteLine(date);
+                */
+                Gmail newGmail = new Gmail();
+                newGmail.Id = RetrieveID(sortedEmails[i]);
+                newGmail.InternalDate = RetrieveInternalDate(sortedEmails[i]);
+                newGmail.From = RetrieveHeader(sortedEmails[i].Payload, "From");
+                newGmail.Subject = RetrieveHeader(sortedEmails[i].Payload, "Subject");
+                newGmail.Date = UnixToDate(newGmail.InternalDate);
+                // RetrieveBodyWrapper takes body by reference, and sets it to the decoded plain text
+                // body of the email
+                string body = "";
+                RetrieveBodyWrapper(sortedEmails[i].Payload, "text/plain", ref body);
+                newGmail.Body = body;
+                gmails.Add(newGmail);
+            } catch (Exception e) {
+                Console.WriteLine($"Error extracting fields for email {i}. {e.Message}");
+            }
+            //DateTime date = new DateTime(sortedEmails);
+        }
+        return gmails;
+    }
+
+    private static string RetrieveID(Message message) {
+        if (message.Id == null) {
+            throw new NullReferenceException($"No id found");
+        }
+        return message.Id;
+    }
+
+    private static long RetrieveInternalDate(Message message) {
+        if (message.InternalDate == null) {
+            throw new NullReferenceException($"No internal date found");
+        }
+        return message.InternalDate ?? 0;
+    }
+
+    private static string RetrieveHeader(MessagePart part, string headerType) {
+        List<MessagePartHeader> header = part.Headers.Where(x => x.Name == headerType).ToList();
+        if (header.Count > 0) {
+            return header[0].Value;
+        } else {
+            throw new NullReferenceException($"No {headerType} found");
+        }
+        
+    }
+    private static DateTime UnixToDate(long ?unixTimeStamp)
+    {
+        if (unixTimeStamp == null) {
+            throw new NullReferenceException("Error: Internal date not found");
+        }
+
+        DateTimeOffset dto = DateTimeOffset.FromUnixTimeMilliseconds(unixTimeStamp ?? 1);
+        DateTime dt = dto.UtcDateTime;
+        return dt;
+    }
+
 }

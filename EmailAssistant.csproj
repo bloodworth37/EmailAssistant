@@ -6,4 +6,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Google.Apis.Gmail.v1" Version="1.66.0.3287" />
+  </ItemGroup>
+
 </Project>

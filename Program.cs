@@ -1,4 +1,9 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using EmailAssist.Data;
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddDbContext<EmailAssistContext>(options =>
+    options.UseSqlite(builder.Configuration.GetConnectionString("EmailAssistContext") ?? throw new InvalidOperationException("Connection string 'EmailAssistContext' not found.")));
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();

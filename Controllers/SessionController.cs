@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using EmailAssist.Data;
 using EmailAssistant.Models;
 using GmailAPI;
+using System.Security.Claims;
 
 namespace EmailAssistant.Controllers
 {
@@ -23,6 +24,7 @@ namespace EmailAssistant.Controllers
         // GET: Session
         public async Task<IActionResult> Index()
         {
+            ViewData["UserEmail"] = GetUserEmail();
             return View(await _context.Session.ToListAsync());
         }
 
@@ -172,9 +174,50 @@ namespace EmailAssistant.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        public async Task<IActionResult> SessionOverview(int id) {
+            return View(await _context.Session.FirstOrDefaultAsync(m => m.Id == id));
+        }
+
+        public async Task<IActionResult> SessionEmails(int sessionNumber, string sessionEmail) {
+            return View(await _context.Email.Where(email =>
+                email.SessionEmailAddress == sessionEmail
+                && email.SessionNumber == sessionNumber).ToListAsync());
+        }
+
+        public async Task<IActionResult> SessionStatistics(int sessionNumber, string sessionEmail) {
+            return View(await _context.Email.Where(email =>
+                email.SessionEmailAddress == sessionEmail
+                && email.SessionNumber == sessionNumber).ToListAsync());
+        }
+
+        public async Task<IActionResult> SessionSummary(int sessionNumber, string sessionEmail) {
+            return View(await _context.Email.Where(email =>
+                email.SessionEmailAddress == sessionEmail
+                && email.SessionNumber == sessionNumber).ToListAsync());
+        }
+
         private bool SessionExists(int id)
         {
             return _context.Session.Any(e => e.Id == id);
+        }
+
+        private string GetUserEmail() {
+            string userEmail = "NaN";
+            var userIdentity = HttpContext.User.Identity as ClaimsIdentity;
+            // Check if the user is authenticated
+            if (userIdentity.IsAuthenticated)
+            {
+                // Retrieve the email claim
+                var userEmailClaim = userIdentity.FindFirst(ClaimTypes.Email);
+                // Check if the email claim exists
+                if (userEmailClaim != null)
+                {
+                    // Access the email value
+                    userEmail = userEmailClaim.Value;
+                }
+
+            }
+            return userEmail;
         }
     }
 }

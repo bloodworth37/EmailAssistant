@@ -1,0 +1,21 @@
+@model EmailAssistant.Models.Session
+
+@{
+    ViewData["Title"] = "Session Overview";
+}
+
+<h1>Session Overview</h1>
+
+<p>@($"{Model.SessionName}: Session No. {Model.SessionNumber}")</p>
+<p>@($"{Model.StartDate.ToString("MM/dd/yyyy")} - {Model.EndDate.ToString("MM/dd/yyyy")}")</p>
+
+<p>
+    <a asp-action="SessionEmails" asp-route-sessionEmail="@Model.EmailAddress"
+    asp-route-sessionNumber="@Model.SessionNumber">View all emails in session</a>
+    <br>
+    <a asp-action="SessionStatistics" asp-route-sessionEmail="@Model.EmailAddress"
+    asp-route-sessionNumber="@Model.SessionNumber">View session statistics</a>
+    <br>
+    <a asp-action="SessionSummary" asp-route-sessionEmail="@Model.EmailAddress"
+    asp-route-sessionNumber="@Model.SessionNumber">View AI-generated session summary</a>
+</p>

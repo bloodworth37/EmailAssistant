@@ -196,6 +196,11 @@ namespace EmailAssistant.Controllers
                 && email.SessionNumber == sessionNumber).ToListAsync());
         }
 
+        public IActionResult EmailBody(string contents) {
+            ViewData["Contents"] = contents;
+            return View();
+        }
+
         private bool SessionExists(int id)
         {
             return _context.Session.Any(e => e.Id == id);

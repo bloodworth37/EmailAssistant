@@ -4,4 +4,32 @@
     ViewData["Title"] = "View Emails";
 }
 
-<p>Placeholder for list of session emails</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Sender</th>
+            <th>Subject</th>
+            <th>Date Received</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var email in Model) {
+        <tr>
+            <td>
+                @email.From
+            </td>
+            <td>
+                @email.Subject
+            </td>
+            <td>
+                @email.Date
+            </td>
+            <td>
+                <a asp-action="EmailBody" asp-route-contents="@email.Body">View Contents</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

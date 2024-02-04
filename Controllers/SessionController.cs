@@ -159,6 +159,12 @@ namespace EmailAssistant.Controllers
             var session = await _context.Session.FindAsync(id);
             if (session != null)
             {
+                IEnumerable<Email> sessionEmails = await _context.Email.Where(email =>
+                email.SessionEmailAddress == session.EmailAddress
+                && email.SessionNumber == session.SessionNumber).ToListAsync();
+                foreach (Email email in sessionEmails) {
+                    _context.Email.Remove(email);
+                }
                 _context.Session.Remove(session);
             }
 

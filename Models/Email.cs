@@ -15,5 +15,7 @@ public class Email
     public string? From { get; set; }
     public string? Subject { get; set; }
     public int SessionNumber { get; set; }
+    [DataType(DataType.EmailAddress)]
+    public string? SessionEmailAddress { get; set; }
 
 }

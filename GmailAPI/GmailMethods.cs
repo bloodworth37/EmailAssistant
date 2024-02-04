@@ -8,6 +8,37 @@ namespace GmailAPI;
 
 public static class GmailMethods {
 
+    public static List<Gmail> RetrieveSession(DateTime start, DateTime end) {
+        List<Gmail> gmails = null;
+        GmailService service = GmailMethods.InitializeService();
+        string userId = "me";
+        string startDate = start.ToString("yyyy/MM/dd");
+        string endDate = end.ToString("yyyy/MM/dd");
+
+        // Get a list of emails within the specified date range: API call
+        IList<Message> emails = GmailMethods.ListEmails(service, userId, startDate, endDate);
+        if (emails == null) {
+            Console.WriteLine("Error: API call failed.");
+            return gmails;
+        }
+
+        // Sort the emails by date in ascending order
+        List<Message> sortedEmails = new List<Message>();
+        // emails are initially provided in descending order; iterate backwards
+        for (int i = emails.Count - 1; i > -1; i--) {
+            try {
+                // the initial API query via ListRequest.Execute() excludes many fields from the returned
+                // Message objects; send a second query via Messages.Get() to retrieve key information
+                sortedEmails.Add(service.Users.Messages.Get(userId, emails[i].Id).Execute());
+            } catch {
+                Console.WriteLine($"API call for Email No. {i} failed.");
+            }
+        }
+
+        // create a new list of gmail objects and initialize it with specific fields from the email list
+        gmails = GmailMethods.CreateGmailList(sortedEmails);
+        return gmails;
+    }
     public static GmailService InitializeService() {
         string ApplicationName = "Email Assistant";
         // the credential object needed to construct the GmailService object
@@ -25,10 +56,10 @@ public static class GmailMethods {
     public static UserCredential GetCredentials() {
         string[] Scopes = { GmailService.Scope.GmailReadonly };
         // path to the client_secret file; used to construct the file stream
-        string CredentialsFilePath = "C:\\GmailAPI\\ClientCredentials\\desktop1_secret.json";
+        string CredentialsFilePath = "secrets\\desktop1_secret.json";
         // path to the file that will contain the user's authorization and refresh tokens,
         // constructed in the GWABroker method using your client secret credentials
-        string TokenFilePath = "C:\\GmailAPI\\CredentialsInfo";
+        string TokenFilePath = "secrets\\";
 
         // create FileStream to read client secret file
         using (var stream = new FileStream(CredentialsFilePath, FileMode.Open, FileAccess.Read))

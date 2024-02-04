@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using EmailAssist.Data;
 using EmailAssistant.Models;
+using GmailAPI;
 
 namespace EmailAssistant.Controllers
 {
@@ -58,7 +59,23 @@ namespace EmailAssistant.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(session);
+                List<Gmail> gmails = GmailMethods.RetrieveSession(session.StartDate, session.EndDate);
+                if (gmails != null) {
+                    foreach (Gmail gmail in gmails) {
+                        Email email = new Email();
+                        email.EmailId = gmail.Id;
+                        email.InternalDate = gmail.InternalDate;
+                        email.Date = gmail.Date;
+                        email.Body = gmail.Body;
+                        email.From = gmail.From;
+                        email.Subject = gmail.Subject;
+                        email.SessionNumber = session.SessionNumber;
+                        email.SessionEmailAddress = session.EmailAddress;
+                        _context.Add(email);
+                    }
+                    _context.Add(session);
+                }
+                
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }

@@ -1,6 +1,9 @@
 ﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using EmailAssistant.Models;
+using System.Security.Claims;
+using Google.Apis.Gmail.v1;
+using GmailAPI;
 
 namespace EmailAssistant.Controllers;
 

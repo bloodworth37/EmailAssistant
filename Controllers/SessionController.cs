@@ -191,6 +191,7 @@ namespace EmailAssistant.Controllers
         }
 
         public async Task<IActionResult> SessionSummary(int sessionNumber, string sessionEmail) {
+            ViewData["test"] = new List<Gmail>();
             return View(await _context.Email.Where(email =>
                 email.SessionEmailAddress == sessionEmail
                 && email.SessionNumber == sessionNumber).ToListAsync());

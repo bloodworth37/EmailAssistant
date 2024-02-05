@@ -16,5 +16,7 @@ namespace EmailAssist.Data
 
         public DbSet<EmailAssistant.Models.Session> Session { get; set; } = default!;
         public DbSet<EmailAssistant.Models.Email> Email { get; set; } = default!;
+        public DbSet<EmailAssistant.Models.Day> Day { get; set; } = default!;
+        public DbSet<EmailAssistant.Models.Sender> Sender { get; set; } = default!;
     }
 }

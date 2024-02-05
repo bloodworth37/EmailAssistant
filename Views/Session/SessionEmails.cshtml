@@ -28,10 +28,10 @@
                 @email.Date
             </td>
             <td>
-                <a asp-action="EmailBody" asp-route-contents="@email.Body">View Contents</a>
+                <a asp-action="EmailBody" asp-route-id="@email.Id">View Contents</a>
             </td>
             <td>
-                <a asp-action="EmailSummary" asp-route-contents="@email.Body">View Summary</a>
+                <a asp-action="EmailSummary" asp-route-id="@email.Id">View Summary</a>
             </td>
         </tr>
 }

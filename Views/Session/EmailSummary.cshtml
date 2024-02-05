@@ -1,7 +1,7 @@
-@model EmailAssistant.Models.Session
+@model EmailAssistant.Models.BigText
 
 @{
     ViewData["Title"] = "Email Summary";
 }
 
-<p>@ViewData["Summary"]</p>
+<p>@Model.Body</p>

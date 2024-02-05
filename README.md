@@ -2,7 +2,7 @@
 
 # Email Assistant Project #
 This is a personal project that I'm building to hone my full-stack development skills.
-I've chosen the ASP.NET MVC framework to synergize with my experience using Azure 
+I've chosen the ASP.NET Core MVC framework to synergize with my experience using Azure 
 cloud resources.
 
 This application functions as an assistant which provides the user with valuable insights

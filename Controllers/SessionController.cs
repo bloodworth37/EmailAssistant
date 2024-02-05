@@ -239,22 +239,22 @@ namespace EmailAssistant.Controllers
         }
 
         public async Task<IActionResult> SessionSummary(int sessionNumber, string sessionEmail) {
-            ViewData["test"] = new List<Gmail>();
             return View(await _context.Email.Where(email =>
                 email.SessionEmailAddress == sessionEmail
                 && email.SessionNumber == sessionNumber).ToListAsync());
         }
 
-        public IActionResult EmailBody(string contents) {
-            ViewData["Contents"] = contents;
-            return View();
+        public async Task<IActionResult> EmailBody(int id) {
+            Email email = await _context.Email.FindAsync(id);
+            return View(new BigText(email.Body));
         }
 
-        public async Task<IActionResult> EmailSummary(string contents) {
-            ViewData["Summary"] = await OpenAIMethods.GenerateEmailSummary(
-                "Please summarize the following email.\n" + contents,
+        public async Task<IActionResult> EmailSummary(int id) {
+            Email email = await _context.Email.FindAsync(id);
+            string summary = await OpenAIMethods.GenerateEmailSummary(
+                "Please summarize the following email.\n" + email.Body,
                 _config["Authentication:OpenAI:ApiKey"]);
-            return View();
+            return View(new BigText(summary));
         }
 
         private bool SessionExists(int id)

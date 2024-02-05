@@ -213,10 +213,26 @@ namespace EmailAssistant.Controllers
                 && email.SessionNumber == sessionNumber).ToListAsync());
         }
 
-        public async Task<IActionResult> SessionStatistics(int sessionNumber, string sessionEmail) {
-            return View(await _context.Email.Where(email =>
-                email.SessionEmailAddress == sessionEmail
-                && email.SessionNumber == sessionNumber).ToListAsync());
+        public async Task<IActionResult> SessionStatistics(int id, int sessionNumber, string sessionEmail) {
+            IEnumerable<Day> days = new List<Day>();
+            IEnumerable<Sender> senders = new List<Sender>();
+            var currentSession = await _context.Session.FindAsync(id);
+            DateTime startDate = currentSession.StartDate.Date;
+            DateTime endDate = currentSession.EndDate.Date;
+            days = _context.Day.Where(day => day.Date >= startDate && day.Date <= endDate).ToListAsync().Result;
+            if (currentSession == null) {
+                Console.WriteLine("WARNING");
+            }
+            foreach (Day day in days) {
+                Console.WriteLine(day.Date);
+            }
+            foreach (Sender sender in senders) {
+                Console.WriteLine(sender.SenderAddress);
+            }
+            senders = _context.Sender.Where(sender => sender.SessionNumber == sessionNumber &&
+            sender.SessionEmailAddress == sessionEmail).ToListAsync().Result;
+
+            return View(new DaySenderComposite(days, senders));
         }
 
         public async Task<IActionResult> SessionSummary(int sessionNumber, string sessionEmail) {

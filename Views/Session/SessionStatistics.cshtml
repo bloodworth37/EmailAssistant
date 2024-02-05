@@ -1,7 +1,53 @@
-@model IEnumerable<EmailAssistant.Models.Email>
+@model EmailAssistant.Models.DaySenderComposite;
 
 @{
     ViewData["Title"] = "View Statistics";
 }
 
-<p>Placeholder for session statistics</p>
+<h3>Number of Emails per Sender</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Sender</th>
+            <th>Emails</th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var sender in Model.Senders) {
+        <tr>
+            <td>
+                @sender.SenderAddress
+            </td>
+            <td>
+                @sender.NumEmails
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+<h3>Number of Emails per Day</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Day</th>
+            <th>Emails</th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var day in Model.Days) {
+        <tr>
+            <td>
+                @day.Date
+            </td>
+            <td>
+                @day.NumEmails
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+<p>Average Emails per Day: @Model.Days.Average(day => day.NumEmails)</p>
+<p>Maximum Emails in a Single Day: @Model.Days.Max(day => day.NumEmails)</p>
+<p>Minimum Emails in a Single Day: @Model.Days.Min(day => day.NumEmails)</p>

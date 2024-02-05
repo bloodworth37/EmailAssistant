@@ -1,8 +1,8 @@
 ### Zach Bloodworth | zachbloodworth@gmail.com ###
 
 # Email Assistant Project #
-This is a personal project that I'm developing to hone my full-stack development skills.
-I've chosen to the ASP.NET MVC framework to synergize with my experience using Azure 
+This is a personal project that I'm building to hone my full-stack development skills.
+I've chosen the ASP.NET MVC framework to synergize with my experience using Azure 
 cloud resources.
 
 This application functions as an assistant which provides the user with valuable insights

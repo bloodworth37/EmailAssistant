@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using EmailAssist.Data;
 using EmailAssistant.Models;
 using GmailAPI;
+using OpenAIAPI;
 using System.Security.Claims;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -15,11 +16,13 @@ namespace EmailAssistant.Controllers
 {
     public class SessionController : Controller
     {
+        private readonly IConfiguration _config;
         private readonly EmailAssistContext _context;
 
-        public SessionController(EmailAssistContext context)
+        public SessionController(EmailAssistContext context, IConfiguration config)
         {
             _context = context;
+            _config = config;
         }
 
         // GET: Session
@@ -244,6 +247,13 @@ namespace EmailAssistant.Controllers
 
         public IActionResult EmailBody(string contents) {
             ViewData["Contents"] = contents;
+            return View();
+        }
+
+        public async Task<IActionResult> EmailSummary(string contents) {
+            ViewData["Summary"] = await OpenAIMethods.GenerateEmailSummary(
+                "Please summarize the following email.\n" + contents,
+                _config["Authentication:OpenAI:ApiKey"]);
             return View();
         }
 

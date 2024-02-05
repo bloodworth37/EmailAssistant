@@ -11,7 +11,8 @@
             <th>Sender</th>
             <th>Subject</th>
             <th>Date Received</th>
-            <th></th>
+            <th>Contents</th>
+            <th>Summary</th>
         </tr>
     </thead>
     <tbody>
@@ -28,6 +29,9 @@
             </td>
             <td>
                 <a asp-action="EmailBody" asp-route-contents="@email.Body">View Contents</a>
+            </td>
+            <td>
+                <a asp-action="EmailSummary" asp-route-contents="@email.Body">View Summary</a>
             </td>
         </tr>
 }

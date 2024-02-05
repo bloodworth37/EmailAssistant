@@ -9,6 +9,7 @@ using EmailAssist.Data;
 using EmailAssistant.Models;
 using GmailAPI;
 using System.Security.Claims;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace EmailAssistant.Controllers
 {
@@ -61,19 +62,47 @@ namespace EmailAssistant.Controllers
         {
             if (ModelState.IsValid)
             {
+                List<Sender> senders = new List<Sender>();
+                List<Day> days = new List<Day>();
                 List<Gmail> gmails = GmailMethods.RetrieveSession(session.StartDate, session.EndDate);
                 if (gmails != null) {
                     foreach (Gmail gmail in gmails) {
-                        Email email = new Email();
-                        email.EmailId = gmail.Id;
-                        email.InternalDate = gmail.InternalDate;
-                        email.Date = gmail.Date;
-                        email.Body = gmail.Body;
-                        email.From = gmail.From;
-                        email.Subject = gmail.Subject;
-                        email.SessionNumber = session.SessionNumber;
-                        email.SessionEmailAddress = session.EmailAddress;
+                        Email email = new Email(gmail.Id, gmail.InternalDate, gmail.Date, gmail.Body,
+                        gmail.From, gmail.Subject, session.SessionNumber, session.EmailAddress);
+
+                        // check the senders list for an existing entry matching the current gmail's sender address
+                        // if a match is found, increment numEmails for that entry by 1
+                        // if no match is found, create a new entry with numEmails = 1
+                        if (senders.Any(sender => sender.SenderAddress == gmail.From)) {
+                            foreach (Sender sender2 in senders.Where(sender3 => sender3.SenderAddress == gmail.From)) {
+                                sender2.NumEmails += 1;
+                            }
+                        } else {
+                            senders.Add(new Sender(session.SessionNumber, session.EmailAddress, gmail.From, 1));
+                        }
                         _context.Add(email);
+
+                        // check the days list for an existing entry matching the current gmail's date
+                        // if a match is found, increment numEmails for that entry by 1
+                        // if no match is found, create a new entry with numEmails = 1
+                        if (days.Any(day => day.Date.Date == gmail.Date.Date)) {
+                            foreach (Day day2 in days.Where(day3 => day3.Date.Date == gmail.Date.Date)) {
+                                day2.NumEmails += 1;
+                            }
+                        } else {
+                            days.Add(new Day(gmail.Date.Date, 1));
+                        }
+                    }
+                    foreach (Sender sender in senders) {
+                        _context.Add(sender);
+                    }
+                    foreach (Day day in days) {
+                        Day existingDay = await _context.Day.FirstOrDefaultAsync(entry => entry.Date == day.Date);
+                        if (existingDay != null) {
+                            existingDay.NumEmails = day.NumEmails;
+                        } else {
+                            _context.Add(day);
+                        }
                     }
                     _context.Add(session);
                 }

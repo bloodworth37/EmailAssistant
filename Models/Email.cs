@@ -18,4 +18,18 @@ public class Email
     [DataType(DataType.EmailAddress)]
     public string? SessionEmailAddress { get; set; }
 
+    public Email() {}
+
+    public Email(string emailID, long internalDate, DateTime date, string body,
+        string from, string subject, int sessionNumber, string sessionEmailAddress) {
+            EmailId = emailID;
+            InternalDate = internalDate;
+            Date = date;
+            Body = body;
+            From = from;
+            Subject = subject;
+            SessionNumber = sessionNumber;
+            SessionEmailAddress = sessionEmailAddress;
+    }
+
 }
